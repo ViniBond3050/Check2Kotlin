@@ -1,0 +1,110 @@
+Melhoras:
+1.Mover a Lógica do Botão para a Activity: - Antes, a lógica de adicionar itens à lista estava dentro da função `GreetingPreview` no Composable. 
+Isso não é uma prática recomendada, pois a lógica de manipulação de dados deve residir na camada de modelo ou controladora, não na visualização. 
+- Melhoria: A lógica de adicionar itens foi movida para dentro da `MainActivity`, que é a Activity principal da aplicação.
+Isso segue o princípio de separação de interesses (Separation of Concerns), tornando o código mais organizado e fácil de entender. 
+Agora, a `MainActivity` é responsável pela interação do usuário e pela manipulação dos dados. 
+2.Comentários e Documentação- Antes, o código carecia de comentários explicativos e documentação. 
+Comentários são essenciais para explicar o propósito de classes, métodos e trechos de código, facilitando a compreensão do código por outros desenvolvedores 
+(ou por você mesmo no futuro). 
+
+
+package carreiras.com.github.listadecompras 
+import android.os.Bundle 
+import android.widget.Button 
+import android.widget.EditText 
+import androidx.activity.ComponentActivity 
+import androidx.activity.compose.setContent 
+import androidx.compose.foundation.layout.fillMaxSize 
+import androidx.compose.material3.MaterialTheme 
+import androidx.compose.material3.Surface 
+import androidx.compose.material3.Text 
+import androidx.compose.runtime.Composable 
+import androidx.compose.ui.Modifier 
+import androidx.compose.ui.tooling.preview.Preview 
+import androidx.recyclerview.widget.LinearLayoutManager 
+import androidx.recyclerview.widget.RecyclerView 
+class MainActivity : ComponentActivity() { 
+private lateinit var itemsAdapter: 
+ItemsAdapter 
+override fun 
+onCreate(savedInstanceState: Bundle?) { 
+super.onCreate(savedInstanceState) 
+setContent { 
+ListaDeComprasTheme { 
+// Uma superfície utilizando a cor 'background' do tema 
+Surface( 
+modifier = 
+Modifier.fillMaxSize(), 
+color = 
+MaterialTheme.colorScheme.background 
+) { 
+Greeting("Android") 
+// Inicializa o RecyclerView e o Adapter 
+val recyclerView = 
+findViewById<RecyclerView>(R.id.recyclerView
+) 
+itemsAdapter = 
+ItemsAdapter() 
+recyclerView.adapter = 
+itemsAdapter 
+} 
+} 
+} 
+val button = 
+findViewById<Button>(R.id.button) 
+val editText = 
+findViewById<EditText>(R.id.editText) 
+// Adiciona item quando o botão é clicado 
+button.setOnClickListener { 
+val itemName = 
+editText.text.toString().trim() 
+if (itemName.isNotEmpty()) { 
+val item = ItemModel(name = 
+itemName) 
+itemsAdapter.addItem(item) 
+editText.text.clear() 
+// Limpa EditText após adicionar o item 
+} 
+} 
+} 
+} 
+class ItemsAdapter : 
+RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() { 
+private val items = 
+mutableListOf<ItemModel>() 
+// Adiciona novo item à lista 
+fun addItem(newItem: ItemModel) { 
+items.add(newItem) 
+notifyDataSetChanged() 
+} 
+override fun onCreateViewHolder(parent: 
+ViewGroup, viewType: Int): ItemViewHolder { 
+val view = 
+LayoutInflater.from(parent.context).inflate(
+R.layout.item_layout, parent, false) 
+return ItemViewHolder(view) 
+} 
+override fun getItemCount(): Int = items.size override fun onBindViewHolder(holder: 
+ItemViewHolder, position: Int) { 
+val item = items[position] 
+holder.bind(item) 
+} 
+class ItemViewHolder(view: View) : 
+RecyclerView.ViewHolder(view) 
+{ 
+private val textView = 
+view.findViewById<TextView>(R.id.textViewItem) 
+fun bind(item: ItemModel) { 
+textView.text = item.name 
+} 
+} 
+} 
+@Composable 
+fun Greeting(name: String, modifier: 
+Modifier = Modifier) { 
+Text( 
+text = "Hello $name!", 
+modifier = modifier 
+) 
+}
